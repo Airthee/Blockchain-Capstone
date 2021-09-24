@@ -1,24 +1,43 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.7;
 
-import 'openzeppelin-solidity/contracts/utils/Address.sol';
-import 'openzeppelin-solidity/contracts/drafts/Counters.sol';
-import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
-import 'openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol';
+import '@openzeppelin/contracts/utils/Address.sol';
+import '@openzeppelin/contracts/utils/Counters.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
+import "@openzeppelin/contracts/utils/Address.sol";
 import "./Oraclize.sol";
 
-contract Ownable {
-    //  TODO's
+abstract contract Ownable {
     //  1) create a private '_owner' variable of type address with a public getter function
+    address private _owner;
+    
     //  2) create an internal constructor that sets the _owner var to the creater of the contract 
+    constructor() {
+        _owner = msg.sender;
+        emit OwnerShipTransfered(0x0, _owner);
+    }
+    
     //  3) create an 'onlyOwner' modifier that throws if called by any account other than the owner.
-    //  4) fill out the transferOwnership function
+    modifier onlyOwner() {
+        require(msg.sender == _owner, "You are not the owner of the contract");
+        _;
+    }
+    
     //  5) create an event that emits anytime ownerShip is transfered (including in the constructor)
+    event OwnerShipTransfered(address previousOwner, address newOwner);
+
+    function getOwner () public view returns (address) {
+        return _owner;
+    }
 
     function transferOwnership(address newOwner) public onlyOwner {
-        // TODO add functionality to transfer control of the contract to a newOwner.
         // make sure the new owner is a real address
-
+        require(!Address.isContract(newOwner), "New owner should be a real address");
+        
+        // transfer control of the contract to a newOwner.
+        address previousOwner = _owner;
+        _owner = newOwner;
+        emit OwnerShipTransfered(previousOwner, _owner);
     }
 }
 
