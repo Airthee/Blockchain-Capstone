@@ -5,13 +5,18 @@
   "main": "index.js",
   "scripts": {
     "dev": "lite-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ganache:cli": "ganache-cli -m \"aim flame wool stool maid loop used chair erase suffer belt novel\"",
+    "truffle:test": "cd eth-contracts && truffle test",
+    "truffle:deploy:dev": "cd eth-contracts && truffle migrate --reset",
+    "truffle:deploy:prod": "cd eth-contracts && truffle migrate"
   },
   "keywords": [],
   "author": "pk <pkrasam@gmail.com> (https://ipfs.infura.io/ipfs/QmSXiR9Khm3yo1J67nUopvVBxFJ8YGN2fUGZ34Etr3m92x/)",
   "license": "MIT",
   "devDependencies": {
-    "lite-server": "2.4.0"
+    "ganache-cli": "^6.12.2",
+    "lite-server": "2.4.0",
+    "truffle": "^5.4.12"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
