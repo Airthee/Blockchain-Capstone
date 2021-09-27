@@ -75,6 +75,10 @@ contract("TestERC721Mintable", (accounts) => {
       assert.equal(await this.contract.balanceOf(currentOwner), 2);
       assert.equal(await this.contract.balanceOf(newOwner), 3);
     });
+
+    it("should approve another account for a token");
+
+    it("should allow approved account to transfer a token");
   });
 
   describe("have ownership properties", function () {
