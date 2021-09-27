@@ -43,15 +43,46 @@ abstract contract Ownable {
     }
 }
 
-//  TODO's: Create a Pausable contract that inherits from the Ownable contract
+// Create a Pausable contract that inherits from the Ownable contract
 abstract contract Pausable is Ownable {
+    //  1) create a private '_paused' variable of type bool
+    bool private _paused;
 
+    //  5) create a Paused & Unpaused event that emits the address that triggered the event
+    event Paused();
+    event Unpaused();
+
+    //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
+    modifier whenNotPaused() {
+        require(!_paused, "Contract is paused");
+        _;
+    }
+
+    modifier paused() {
+        require(_paused, "Contract is not paused");
+        _;
+    }
+
+    //  3) create an internal constructor that sets the _paused variable to false
+    constructor() {
+        _paused = false;
+    }
+
+    //  2) create a public setter using the inherited onlyOwner modifier 
+    function pause() onlyOwner whenNotPaused public {
+        _paused = true;
+        emit Paused();
+    }
+
+    function unpause() onlyOwner paused public {
+        _paused = false;
+        emit Unpaused();
+    }
+
+    function isPaused() public view returns (bool) {
+        return _paused;
+    }
 }
-//  1) create a private '_paused' variable of type bool
-//  2) create a public setter using the inherited onlyOwner modifier 
-//  3) create an internal constructor that sets the _paused variable to false
-//  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
-//  5) create a Paused & Unpaused event that emits the address that triggered the event
 
 contract ERC165 {
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
@@ -136,7 +167,7 @@ contract ERC721 is Pausable, ERC165 {
     }
 
 //    @dev Approves another address to transfer the given token ID
-    function approve(address to, uint256 tokenId) public {
+    function approve(address to, uint256 tokenId) public whenNotPaused {
         
         // TODO require the given address to not be the owner of the tokenId
 
@@ -158,7 +189,7 @@ contract ERC721 is Pausable, ERC165 {
      * @param to operator address to set the approval
      * @param approved representing the status of the approval to be set
      */
-    function setApprovalForAll(address to, bool approved) public {
+    function setApprovalForAll(address to, bool approved) public whenNotPaused {
         require(to != msg.sender);
         _operatorApprovals[msg.sender][to] = approved;
         emit ApprovalForAll(msg.sender, to, approved);
@@ -174,17 +205,17 @@ contract ERC721 is Pausable, ERC165 {
         return _operatorApprovals[owner][operator];
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public {
+    function transferFrom(address from, address to, uint256 tokenId) public whenNotPaused {
         require(_isApprovedOrOwner(msg.sender, tokenId));
 
         _transferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public whenNotPaused {
         safeTransferFrom(from, to, tokenId, "");
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public whenNotPaused {
         transferFrom(from, to, tokenId);
         require(_checkOnERC721Received(from, to, tokenId, _data));
     }
@@ -448,7 +479,7 @@ contract ERC721Enumerable is ERC165, ERC721 {
     }
 }
 
-contract ERC721Metadata is ERC721Enumerable {
+abstract contract ERC721Metadata is ERC721Enumerable {
 
     // Create private vars for token _name, _symbol, and _baseTokenURI (string)
     string private _name;
@@ -495,7 +526,7 @@ contract ERC721Metadata is ERC721Enumerable {
 
 
     // Create an internal function to set the tokenURI of a specified tokenId
-    function setTokenURI(uint256 tokenId) internal {
+    function setTokenURI(uint256 tokenId) internal whenNotPaused {
         // require the token exists before setting
         require(_exists(tokenId), "Token has to exist before setting its URI");
 
@@ -519,7 +550,7 @@ contract ERC721Metadata is ERC721Enumerable {
 contract AirtheeHouseToken is ERC721Metadata {
     constructor () ERC721Metadata("AirtheeHouseToken", "AHT", "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {}
     
-    function mint(address to, uint256 tokenId) public onlyOwner returns (bool) {
+    function mint(address to, uint256 tokenId) public onlyOwner whenNotPaused returns (bool) {
         _mint(to, tokenId);
         setTokenURI(tokenId);
         return true;

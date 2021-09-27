@@ -8,12 +8,14 @@ contract("TestERC721Mintable", (accounts) => {
     beforeEach(async function () {
       this.contract = await AirtheeHouseToken.new({ from: account_one });
 
+      // ACT
       await this.contract.mint(account_one, 0, { gas: 6721975 });
       await this.contract.mint(account_one, 1, { gas: 6721975 });
       await this.contract.mint(account_one, 2, { gas: 6721975 });
       await this.contract.mint(account_two, 3, { gas: 6721975 });
       await this.contract.mint(account_two, 4, { gas: 6721975 });
 
+      // ASSERT
       assert.equal(await this.contract.ownerOf(0), account_one);
       assert.equal(await this.contract.ownerOf(1), account_one);
       assert.equal(await this.contract.ownerOf(2), account_one);
@@ -22,11 +24,13 @@ contract("TestERC721Mintable", (accounts) => {
     });
 
     it("should return total supply", async function () {
+      // ASSERT
       const totalSupply = await this.contract.totalSupply();
       assert.equal(totalSupply, 5);
     });
 
     it("should get token balance", async function () {
+      // ASSERT
       assert.equal(await this.contract.balanceOf(account_one), 3);
       assert.equal(await this.contract.balanceOf(account_two), 2);
     });
@@ -84,19 +88,75 @@ contract("TestERC721Mintable", (accounts) => {
       const minter = account_two;
 
       // ACT
-      let ownerError = false;
+      let ownerError = null;
       try {
         await this.contract.mint(minter, tokenId, { from: account_two });
       } catch (error) {
-        ownerError = error.reason === "You are not the owner of the contract";
+        ownerError = error.reason;
       }
 
       // ASSERT
-      assert.equal(ownerError, true);
+      assert.equal(ownerError, "You are not the owner of the contract");
     });
 
     it("should return contract owner", async function () {
       assert.equal(await this.contract.getOwner(), account_one);
+    });
+  });
+
+  describe("pausable spec", function () {
+    this.beforeEach(async function () {
+      this.contract = await AirtheeHouseToken.new({ from: account_one });
+    });
+
+    it("should pause the contract", async function () {
+      // ACT
+      const oldPaused = await this.contract.isPaused();
+      const response = await this.contract.pause();
+      const newPaused = await this.contract.isPaused();
+
+      // ASSERT
+      assert.equal(oldPaused, false);
+      assert.equal(newPaused, true);
+      assert.equal(
+        response.logs.some((l) => l.event === "Paused"),
+        true
+      );
+    });
+
+    it("should not be able to call methods if the contract is paused", async function () {
+      // ARRANGE
+      await this.contract.pause();
+      const tokenId = 6;
+
+      // ACT
+      let pauseError = null;
+      try {
+        await this.contract.mint(account_one, tokenId);
+      } catch (error) {
+        pauseError = error.reason;
+      }
+
+      // ASSERT
+      assert.equal(pauseError, "Contract is paused");
+    });
+
+    it("should unpause the contract", async function () {
+      // ARRANGE
+      await this.contract.pause();
+
+      // ACT
+      const oldPaused = await this.contract.isPaused();
+      const response = await this.contract.unpause();
+      const newPaused = await this.contract.isPaused();
+
+      // ASSERT
+      assert.equal(oldPaused, true);
+      assert.equal(newPaused, false);
+      assert.equal(
+        response.logs.some((l) => l.event === "Unpaused"),
+        true
+      );
     });
   });
 });
