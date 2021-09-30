@@ -3,6 +3,8 @@ const AirtheeHouseToken = artifacts.require("AirtheeHouseToken");
 contract("TestERC721Mintable", (accounts) => {
   const account_one = accounts[0];
   const account_two = accounts[1];
+  const account_three = accounts[2];
+  const account_four = accounts[3];
 
   describe("match erc721 spec", function () {
     beforeEach(async function () {
@@ -76,9 +78,49 @@ contract("TestERC721Mintable", (accounts) => {
       assert.equal(await this.contract.balanceOf(newOwner), 3);
     });
 
-    it("should approve another account for a token");
+    it("should approve another account for a token", async function () {
+      // ARRANGE
+      const tokenId = 2;
+      const approved = account_three;
 
-    it("should allow approved account to transfer a token");
+      // ACT
+      await this.contract.approve(approved, tokenId, { from: account_one });
+      const result = await this.contract.getApproved(tokenId);
+
+      // ASSERT
+      assert.equal(result, approved);
+    });
+
+    it("should allow approved account to transfer a token", async function () {
+      // ARRANGE
+      const tokenId = 2;
+      const currentApproved = account_three;
+      const currentOwner = account_one;
+      const newOwner = account_four;
+      const currentOwnerBalance = Number(
+        await this.contract.balanceOf(currentOwner)
+      );
+      const newOwnerBalance = Number(await this.contract.balanceOf(newOwner));
+      await this.contract.approve(currentApproved, tokenId, {
+        from: currentOwner,
+      });
+
+      // ACT
+      await this.contract.transferFrom(currentOwner, newOwner, tokenId, {
+        from: currentApproved,
+      });
+
+      // ASSERT
+      assert.equal(await this.contract.ownerOf(tokenId), newOwner);
+      assert.equal(
+        Number(await this.contract.balanceOf(currentOwner)),
+        currentOwnerBalance - 1
+      );
+      assert.equal(
+        Number(await this.contract.balanceOf(newOwner)),
+        newOwnerBalance + 1
+      );
+    });
   });
 
   describe("have ownership properties", function () {

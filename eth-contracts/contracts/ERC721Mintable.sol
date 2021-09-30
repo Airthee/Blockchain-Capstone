@@ -166,21 +166,26 @@ contract ERC721 is Pausable, ERC165 {
         return _tokenOwner[tokenId];
     }
 
-//    @dev Approves another address to transfer the given token ID
+    // @dev Approves another address to transfer the given token ID
     function approve(address to, uint256 tokenId) public whenNotPaused {
+        address owner = ownerOf(tokenId);
         
-        // TODO require the given address to not be the owner of the tokenId
+        // require the given address to not be the owner of the tokenId
+        require(to != owner, "Given address should not be the address of the owner");
 
-        // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
+        // require the msg sender to be the owner of the contract or isApprovedForAll() to be true
+        require(msg.sender == owner || isApprovedForAll(owner, msg.sender), "You are not the owner nor the operator");
 
-        // TODO add 'to' address to token approvals
+        // add 'to' address to token approvals
+        _tokenApprovals[tokenId] = to;
 
-        // TODO emit Approval Event
-
+        // emit Approval Event
+        emit Approval(owner, to, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address) {
-        // TODO return token approval if it exists
+        // return token approval if it exists
+        return _tokenApprovals[tokenId];
     }
 
     /**
@@ -206,7 +211,7 @@ contract ERC721 is Pausable, ERC165 {
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public whenNotPaused {
-        require(_isApprovedOrOwner(msg.sender, tokenId));
+        require(_isApprovedOrOwner(msg.sender, tokenId), "You are not the owner nor approved");
 
         _transferFrom(from, to, tokenId);
     }
