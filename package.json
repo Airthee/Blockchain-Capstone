@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "lite-server",
     "ganache:cli": "ganache-cli -m \"aim flame wool stool maid loop used chair erase suffer belt novel\"",
+    "truffle:compile": "cd eth-contracts && truffle compile",
     "truffle:test": "cd eth-contracts && truffle test",
     "truffle:debug": "cd eth-contracts && truffle debug",
     "truffle:deploy:dev": "cd eth-contracts && truffle migrate --reset",
