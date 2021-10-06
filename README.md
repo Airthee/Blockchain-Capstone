@@ -15,6 +15,14 @@ zokrates export-verifier -o ../../../eth-contracts/contracts/SquareVerifier.sol 
 zokrates verify # verify the generated file
 ```
 
+## Mint X tokens
+
+In sokrates, run the following command to generate X proofs (example for 10) :
+
+```bash
+./generateProofs.sh 10
+```
+
 # Project Resources
 
 - [Remix - Solidity IDE](https://remix.ethereum.org/)
