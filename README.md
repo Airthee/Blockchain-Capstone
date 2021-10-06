@@ -9,8 +9,8 @@ docker run -it -v "$(pwd)":"/home/zokrates/code" -w /home/zokrates/code zokrates
 cd ./zokrates/code/square
 zokrates compile -i square.code # compile the code
 zokrates setup
-zokrates compute-witness -a <a> <b> # adds an example of inputs / outputs
-zokrates generate-proof # creates the proof
+zokrates compute-witness -o <FILE> -a <a> <b> # adds an example of inputs / outputs
+zokrates generate-proof -w <WITNESS_FILE> -j <PROOF_FILE> # creates the proof
 zokrates export-verifier -o ../../../eth-contracts/contracts/SquareVerifier.sol # generate the .sol contract
 zokrates verify # verify the generated file
 ```
