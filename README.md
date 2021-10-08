@@ -2,6 +2,15 @@
 
 The capstone will build upon the knowledge you have gained in the course in order to build a decentralized housing product.
 
+## Test
+
+To run test, you must launch ganache at first :
+
+```bash
+npm run ganache:cli
+npm run truffle:test
+```
+
 ## ZoKrates
 
 ```bash
