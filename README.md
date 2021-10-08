@@ -23,6 +23,19 @@ In sokrates, run the following command to generate X proofs (example for 10) :
 ./generateProofs.sh 10
 ```
 
+## OpenSea implementation
+
+Address of the collection : https://testnets.opensea.io/collection/unidentified-contract-kgxviufmjy  
+Contract address : [0xa7bdd13369c3cd0433938c13c0ed7cdae569c517](https://rinkeby.etherscan.io/address/0xa7bdd13369c3cd0433938c13c0ed7cdae569c517)
+
+Items :
+
+- https://testnets.opensea.io/assets/0xa7bdd13369c3cd0433938c13c0ed7cdae569c517/1
+- https://testnets.opensea.io/assets/0xa7bdd13369c3cd0433938c13c0ed7cdae569c517/2
+- https://testnets.opensea.io/assets/0xa7bdd13369c3cd0433938c13c0ed7cdae569c517/3
+- https://testnets.opensea.io/assets/0xa7bdd13369c3cd0433938c13c0ed7cdae569c517/4
+- https://testnets.opensea.io/assets/0xa7bdd13369c3cd0433938c13c0ed7cdae569c517/5
+
 # Project Resources
 
 - [Remix - Solidity IDE](https://remix.ethereum.org/)

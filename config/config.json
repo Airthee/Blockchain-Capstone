@@ -1,0 +1,6 @@
+{
+	"localhost": {
+		"url": "http://localhost:8545",
+		"verifierAddress": "0xa7Bdd13369c3Cd0433938c13C0eD7cDAe569c517"
+	}
+}
