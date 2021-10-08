@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install
+    - run: npm ci
     - run: npm run truffle:compile
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
